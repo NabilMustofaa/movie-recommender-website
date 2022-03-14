@@ -1,0 +1,5 @@
+<nav class="font-sans flex flex-col text-right sm:flex-row sm:text-left sm:justify-end py-4 px-12 bg-white shadow sm:items-baseline w-full">
+    <a href="/" class="text-lg no-underline text-grey-darkest hover:text-blue-200 hover:border-solid hover:border-b ml-4 {{ ($title === "Nabil Portofolio") ? 'text-blue-900 border-solid border-b border-blue-900' : '' }}">Home</a>
+    <a href="/about" class="text-lg no-underline text-grey-darkest hover:text-blue-200 hover:border-solid hover:border-b ml-4 {{ ($title === "About Me") ? 'text-blue-900 border-solid border-b border-blue-900' : '' }}">About</a>
+    <a href="/contact" class="text-lg no-underline text-grey-darkest hover:text-blue-200 hover:border-solid hover:border-b ml-4 {{ ($title === "Contact") ? 'text-blue-900 border-solid border-b border-blue-900' : '' }}">Contact</a>
+</nav>
