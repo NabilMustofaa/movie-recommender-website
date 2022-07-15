@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\favorite;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MovieResources;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,21 +16,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home',[
-        'title'=> 'Nabil Portofolio'
-    ]);
-});
-Route::get('/about', function () {
-    return view('about',[
-        'title'=> 'About Me'
-    ]
-);
-});
-Route::get('/contact', function () {
-    return view('contact',[
-        'title'=> 'Contact'
-    ]
-);
-});
+route::get('/',[MovieResources::class,'index'])->name('home'); 
+route::post('/like',[favorite::class,'favorite'])->middleware('auth')->name('favorite');
+
+route::get('/login',[LoginController::class,'index'])->name('login');
+Route::post('/login',[LoginController::class,'authenticate']);
+Route::post('/logout',[LoginController::class,'logout'])->name('logout');  
+
 
