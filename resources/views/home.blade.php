@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 
@@ -87,8 +86,7 @@
             <div class="hidden md:flex md:items-center md:w-auto w-full order-3 md:order-1" id="menu">
                 <nav>
                     <ul class="md:flex items-center justify-between text-base text-gray-700 pt-4 md:pt-0">
-                        <li><a class="inline-block no-underline hover:text-black hover:underline py-2 px-4" href="#">Shop</a></li>
-                        <li><a class="inline-block no-underline hover:text-black hover:underline py-2 px-4" href="#">About</a></li>
+                        <li><a class="inline-block no-underline hover:text-black hover:underline py-2 px-4" href="#">Home</a></li>
                     </ul>
                 </nav>
             </div>
@@ -194,17 +192,16 @@ Alternatively if you want to just have a single hero
     <section class="bg-white py-8">
 
         <div class="container mx-auto flex items-center flex-wrap pt-4 pb-12">
-
-            
-            @auth
             <nav id="store" class="w-full z-30 top-0 px-6 py-1">
                 <div class="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 px-2 py-3">
                     <a class="uppercase tracking-wide no-underline hover:no-underline font-bold text-gray-800 text-xl " href="#">
-				        Recommedned
+				        Similar Movie based on your recent watched
 			        </a>
               </div>
             </nav>
-            @foreach ($recommended as $movie )
+            
+            @auth
+            @foreach ($recommended_genre as $movie )
             @php
                 if ($count==7) {
                     break;
@@ -227,68 +224,212 @@ Alternatively if you want to just have a single hero
                             </div>
                         </div>
                         <div class="flex mt-6 justify-items-end">
-                            <form action="/like" method="POST">
-                                @csrf
-                                <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
-                                
                                 @if (auth()->check())
-                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                     @if ($favorites->contains('movie_id', $movie['id']) and $favorites->contains('user_id', auth()->user()->id))
+                                        @if($favorites->where('movie_id', $movie['id'])->first()->liked == 1)
+                                        <form action="/like/{{ $movie['id'] }}/delete" method="POST">
+                                        @csrf
+                                        @method('delete')
+                                        {{-- <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                        <input type="hidden" name="user_id" value="{{ auth()->user()->id }}"> --}}
+                                        <button type="submit" name="liked" value="1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="black">
+                                                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                            </svg>    
+                                        </button>
+                                        </form>     
+                                        @else
+                                        <form action="/like/{{ $movie['id'] }}/update" method="POST">
+                                        @csrf
+                                        @method('put')
+                                        <button type="submit" name="liked" value="1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="gray">
+                                                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                            </svg>   
+                                        </button>
+                                        </form>      
+                                        @endif
+                                        @if ($favorites->where('movie_id', $movie['id'])->first()->liked == 0)
+                                        <form action="/like/{{ $movie['id'] }}/delete" method="POST">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="submit" name="liked" value="0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="black">
+                                                <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
+                                            </svg>
+                                        </button>
+                                        </form>
+                                        @else
+                                        <form action="/like/{{ $movie['id'] }}/update" method="POST">
+                                        @csrf
+                                        @method('put')
+                                        <button type="submit" name="liked" value="0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
+                                                <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
+                                            </svg>
+                                        </button>     
+                                        @endif
+                                        </form>
+                                    @else
+                                    <form action="/like" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+                                    <button type="submit" name="liked" value="1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="grey">
+                                            <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                        </svg>    
+                                    </button>  
+                                    </form>    
+                                    <form action="/like" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">   
+                                    <button type="submit" name="liked" value="0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
+                                            <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
+                                        </svg>
+                                    </button>   
+                                    </form>        
+                                    @endif
                                     
+                                @else
+                                <form action="/like" method="POST">
+                                <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                <input type="hidden" name="user_id" value="0">
+                                <button type="submit" name="liked" value="1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="grey">
+                                        <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                    </svg>    
+                                </button>         
+                                <button type="submit" name="liked" value="0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
+                                        <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
+                                    </svg>
+                                </button> 
+                                </form>      
+                                @endif   
+                        </div>
+                    </div>
+                </a>
+            </div>
+            @endforeach
+            <nav id="store" class="w-full z-30 top-0 px-6 py-1">
+                <div class="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 px-2 py-3">
+                    <a class="uppercase tracking-wide no-underline hover:no-underline font-bold text-gray-800 text-xl " href="#">
+				        People also liked
+			        </a>
+              </div>
+            </nav>
+            @foreach ($recommended as $movie )
+            @php
+                if ($count==11) {
+                    break;
+                }
+                $count++
+            @endphp
+            <div class="w-full md:w-1/3 xl:w-1/4 p-6 flex">
+                <a href="#" class="block">
+                    <img class="hover:grow hover:shadow-lg" src="https://image.tmdb.org/t/p/w500{{ $movie["poster_path"] }}">
+                    <div class="flex justify-between">
+                        <div class="flex flex-col">
+                            <div class="pt-3 flex items-center justify-between">
+                                <p class="">{{ $movie['original_title'] }}</p>
+                            </div>
+                            <div class="flex">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pt-1" viewBox="0 0 20 20" fill="yellow">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                  </svg>
+                                  <p class="px-1 text-gray-900">{{ $movie["vote_average"] }} / 10.00</p>
+                            </div>
+                        </div>
+                        <div class="flex mt-6 justify-items-end">
+                            @if (auth()->check())
+                                @if ($favorites->contains('movie_id', $movie['id']) and $favorites->contains('user_id', auth()->user()->id))
                                     @if($favorites->where('movie_id', $movie['id'])->first()->liked == 1)
+                                    <form action="/like/{{ $movie['id'] }}/delete" method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    {{-- <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}"> --}}
                                     <button type="submit" name="liked" value="1">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="black">
                                             <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                         </svg>    
-                                    </button>     
+                                    </button>
+                                    </form>     
                                     @else
+                                    <form action="/like/{{ $movie['id'] }}/update" method="POST">
+                                    @csrf
+                                    @method('put')
                                     <button type="submit" name="liked" value="1">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="gray">
                                             <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                         </svg>   
-                                    </button>      
+                                    </button>
+                                    </form>      
                                     @endif
                                     @if ($favorites->where('movie_id', $movie['id'])->first()->liked == 0)
+                                    <form action="/like/{{ $movie['id'] }}/delete" method="POST">
+                                    @csrf
+                                    @method('delete')
                                     <button type="submit" name="liked" value="0">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="black">
                                             <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
                                         </svg>
                                     </button>
+                                    </form>
                                     @else
+                                    <form action="/like/{{ $movie['id'] }}/update" method="POST">
+                                    @csrf
+                                    @method('put')
                                     <button type="submit" name="liked" value="0">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
                                             <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
                                         </svg>
                                     </button>     
                                     @endif
+                                    </form>
                                 @else
+                                <form action="/like" method="POST">
+                                @csrf
+                                <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                 <button type="submit" name="liked" value="1">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="grey">
                                         <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                     </svg>    
-                                </button>         
+                                </button>  
+                                </form>    
+                                <form action="/like" method="POST">
+                                @csrf
+                                <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">   
                                 <button type="submit" name="liked" value="0">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
                                         <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
                                     </svg>
                                 </button>   
-                                        
+                                </form>        
                                 @endif
-                                    
-                                @else
-                                <button type="submit" name="liked" value="1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="grey">
-                                        <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                                    </svg>    
-                                </button>         
-                                <button type="submit" name="liked" value="0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
-                                        <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
-                                    </svg>
-                                </button>       
-                                @endif
-                            </form>    
-                        </div>
+                                
+                            @else
+                            <form action="/like" method="POST">
+                            <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                            <input type="hidden" name="user_id" value="0">
+                            <button type="submit" name="liked" value="1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="grey">
+                                    <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                </svg>    
+                            </button>         
+                            <button type="submit" name="liked" value="0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
+                                    <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
+                                </svg>
+                            </button> 
+                            </form>      
+                            @endif   
+                    </div>
                     </div>
                 </a>
             </div>
@@ -317,13 +458,14 @@ Alternatively if you want to just have a single hero
                     </div>
               </div>
             </nav>
+            
             @foreach ($toprated as $movie )
-            @php
-                if ($count==15) {
-                    break;
-                }
-                $count++
-            @endphp
+                {{-- @php
+                    if ($count==15) {
+                        break;
+                    }
+                    $count++
+                @endphp --}}
             <div class="w-full md:w-1/3 xl:w-1/4 p-6 flex">
                 <a href="#" class="block">
                     <img class="hover:grow hover:shadow-lg" src="https://image.tmdb.org/t/p/w500{{ $movie["poster_path"] }}">
@@ -340,68 +482,92 @@ Alternatively if you want to just have a single hero
                             </div>
                         </div>
                         <div class="flex mt-6 justify-items-end">
-                            <form action="/like" method="POST">
-                                @csrf
-                                <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
-                                
-                                @if (auth()->check())
-                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
-                                    @if ($favorites->contains('movie_id', $movie['id']) and $favorites->contains('user_id', auth()->user()->id))
-                                    
+                            @if (auth()->check())
+                                @if ($favorites->contains('movie_id', $movie['id']) and $favorites->contains('user_id', auth()->user()->id))
                                     @if($favorites->where('movie_id', $movie['id'])->first()->liked == 1)
+                                    <form action="/like/{{ $movie['id'] }}/delete" method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    {{-- <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                    <input type="hidden" name="user_id" value="{{ auth()->user()->id }}"> --}}
                                     <button type="submit" name="liked" value="1">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="black">
                                             <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                         </svg>    
-                                    </button>     
+                                    </button>
+                                    </form>     
                                     @else
+                                    <form action="/like/{{ $movie['id'] }}/update" method="POST">
+                                    @csrf
+                                    @method('put')
                                     <button type="submit" name="liked" value="1">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="gray">
                                             <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                         </svg>   
-                                    </button>      
+                                    </button>
+                                    </form>      
                                     @endif
                                     @if ($favorites->where('movie_id', $movie['id'])->first()->liked == 0)
+                                    <form action="/like/{{ $movie['id'] }}/delete" method="POST">
+                                    @csrf
+                                    @method('delete')
                                     <button type="submit" name="liked" value="0">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="black">
                                             <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
                                         </svg>
                                     </button>
+                                    </form>
                                     @else
+                                    <form action="/like/{{ $movie['id'] }}/update" method="POST">
+                                    @csrf
+                                    @method('put')
                                     <button type="submit" name="liked" value="0">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
                                             <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
                                         </svg>
                                     </button>     
                                     @endif
+                                    </form>
                                 @else
+                                <form action="/like" method="POST">
+                                @csrf
+                                <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                                 <button type="submit" name="liked" value="1">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="grey">
                                         <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
                                     </svg>    
-                                </button>         
+                                </button>  
+                                </form>    
+                                <form action="/like" method="POST">
+                                @csrf
+                                <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                                <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">   
                                 <button type="submit" name="liked" value="0">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
                                         <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
                                     </svg>
                                 </button>   
-                                        
+                                </form>        
                                 @endif
-                                    
-                                @else
-                                <button type="submit" name="liked" value="1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="grey">
-                                        <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
-                                    </svg>    
-                                </button>         
-                                <button type="submit" name="liked" value="0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
-                                        <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
-                                    </svg>
-                                </button>       
-                                @endif
-                            </form>    
-                        </div>
+                                
+                            @else
+                            <form action="/like" method="POST">
+                            <input type="hidden" name="movie_id" value="{{ $movie['id'] }}">
+                            <input type="hidden" name="user_id" value="0">
+                            <button type="submit" name="liked" value="1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="text-gray-500 h-7 w-7" viewBox="0 0 20 20" fill="grey">
+                                    <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                </svg>    
+                            </button>         
+                            <button type="submit" name="liked" value="0">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="gray">
+                                    <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
+                                </svg>
+                            </button> 
+                            </form>      
+                            @endif   
+                    </div>
                     </div>
                 </a>
             </div>
@@ -456,13 +622,4 @@ Alternatively if you want to just have a single hero
 </body>
 
 </html>
-=======
-@extends('layouts.main')
-@section('body')
-<div class="flex flex-col justify-center w-screen h-screen bg-gradient-to-br from-blue-100 via-blue-300 to-blue-500" >
-    <h1 class="text-center text-5xl">WELCOME TO WEBSITE</h1>
-    <p class="text-center mt-8 mr-64 ml-64">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam, earum id? Architecto accusamus, aliquam quis nihil soluta quam delectus qui vel omnis odit nisi ad sunt neque culpa deleniti sint. Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil dignissimos fugit perspiciatis? Quas similique corrupti accusantium molestiae soluta, laudantium unde, mollitia earum, officia sapiente deserunt ducimus molestias sequi. Magnam, inventore.</p>
-    <button class="bg-rose-800 p-4 w-32 mr-auto ml-auto mt-4 align-middle rounded-xl border-black text-white">Click Here</button>
-</div>
-@endsection
->>>>>>> main
+

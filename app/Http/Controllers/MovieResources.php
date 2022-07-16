@@ -21,26 +21,30 @@ class MovieResources extends Controller
         $toprated = Http::get('https://api.themoviedb.org/3/movie/top_rated?api_key=3802f54a5b663782ce73009efb42572f')->json()['results'];
 
         if(auth()->check()){
-            $favorites = favorite::where('user_id',auth()->user()->id)->get();
+            $favorites = favorite::where('user_id',auth()->user()->id)
+            ->orderBy('liked', 'ASC')
+            ->orderBy('created_at', 'DESC')
+            ->get();
             $similar=$this->collaborative();
             $recommended=favorite::where('user_id',$similar)->where('liked',1)->get();
             $movie_recommend=[];
             foreach ($toprated as $item) {
-                if(in_array($item['id'],$recommended->pluck('movie_id')->toArray())){
+                if(in_array($item['id'],$recommended->pluck('movie_id')->toArray()) and !in_array($item['id'],$favorites->pluck('movie_id')->toArray())){
                     array_push($movie_recommend,$item);
                 }
             }
-            
-            
+            $movie_recommend_genre=$this->genresimilarity($toprated);
         }
         else{
             $favorites = [];
-            $recommended=[];
+            $movie_recommend=[];
+            $movie_recommend_genre=[];
         }
         return view('home',[
             'toprated' => $toprated,
             'favorites' => $favorites,
             'recommended' => $movie_recommend,
+            'recommended_genre' => $movie_recommend_genre
         ]);
     }
 
@@ -109,6 +113,7 @@ class MovieResources extends Controller
     {
         //
     }
+
     private function similarity($user1,$user2){
         $favorites1 = favorite::where('user_id',$user1)->get();
         $favorites2 = favorite::where('user_id',$user2)->get();
@@ -127,12 +132,45 @@ class MovieResources extends Controller
         $user=User::all();
         $similarity=array();
         for($i=0;$i<count($user);$i++){
-            if($i!=(auth()->user()->id-1)){
+            if($i!=(auth()->user()->id)){
                 $similarity[$i]=$this->similarity($user[(auth()->user()->id-1)]->id,$user[$i]->id);
             }
         }
         $mostsimilar= array_search(max($similarity), $similarity);
         return $mostsimilar+1;
+    }
+    private function genresimilarity($movielist){
+        $favorites = favorite::where('user_id',auth()->user()->id)
+        ->orderBy('liked', 'DESC')
+        ->orderBy('created_at', 'DESC')->get();
+        $genres=[];
+        foreach ($movielist as $movie) {
+            if($movie['id']==$favorites->first()['movie_id']){
+                $genres=$movie['genre_ids'];
+                break;
+            }
+        }
+        $count=0;
+        foreach ($movielist as $movie) {
+            $similarity=0;
+            foreach ($genres as $genre) {
+                if(in_array($genre,$movie['genre_ids'])){
+                    $similarity++;
+                }
+            }
+            $movie['similarity']=$similarity;
+            $movielist[$count]=$movie;
+            $count++;
+        }
+        $count=0;
 
+        foreach($movielist as $item){
+            if (in_array($item['id'],$favorites->pluck('movie_id')->toArray())){
+                unset($movielist[$count]);
+            }
+            $count++;
+        }
+        $movielist=collect($movielist)->sortByDesc('similarity')->values()->all();
+        return($movielist);
     }
 }

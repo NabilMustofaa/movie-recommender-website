@@ -16,4 +16,18 @@ class favorite extends Controller
         ]);
         return redirect()->back()->with('alert', 'Movie Liked');
     }
+    public function updatefavorite(Request $request,$id)
+    {
+        ModelsFavorite::where('user_id', auth()->user()->id)
+            ->where('movie_id', $id)
+            ->update(['liked' => $request->liked]);
+        return redirect()->back()->with('alert', 'Movie Liked');
+    }
+
+    public function deletefavorite($id){
+        ModelsFavorite::where('user_id', auth()->user()->id)
+            ->where('movie_id', $id)
+            ->delete();
+        return redirect()->back()->with('alert', 'Movie Unliked');
+    }
 }
