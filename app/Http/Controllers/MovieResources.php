@@ -18,7 +18,7 @@ class MovieResources extends Controller
      */
     public function index()
     {
-        $toprated = Http::get('https://api.themoviedb.org/3/movie/top_rated?api_key=3802f54a5b663782ce73009efb42572f')->json()['results'];
+        $toprated = Http::get('https://api.themoviedb.org/3/movie/top_rated?api_key='.env('TMDB_TOKEN'))->json()['results'];
 
         if(auth()->check()){
             $favorites = favorite::where('user_id',auth()->user()->id)
@@ -77,7 +77,12 @@ class MovieResources extends Controller
      */
     public function show($id)
     {
-        //
+        $detail=Http::get('https://api.themoviedb.org/3/movie/'.$id.'?api_key='.env('TMDB_TOKEN'))->json();
+        dump($detail);
+        return view('detail',[
+            'detail' => $detail
+            
+        ]);
     }
 
     /**
@@ -166,6 +171,9 @@ class MovieResources extends Controller
 
         foreach($movielist as $item){
             if (in_array($item['id'],$favorites->pluck('movie_id')->toArray())){
+                unset($movielist[$count]);
+            }
+            if ($item['similarity']==0){
                 unset($movielist[$count]);
             }
             $count++;

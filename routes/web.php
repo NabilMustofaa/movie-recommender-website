@@ -3,6 +3,7 @@
 use App\Http\Controllers\favorite;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MovieResources;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,10 @@ route::get('/',[MovieResources::class,'index'])->name('home');
 route::post('/like',[favorite::class,'favorite'])->middleware('auth');
 route::put('/like/{id}/update',[favorite::class,'updatefavorite'])->middleware('auth');
 route::delete('/like/{id}/delete',[favorite::class,'deletefavorite'])->middleware('auth');
+route::get('/detail/{id}',[MovieResources::class,'show'])->name('home'); 
+Route::get('/api',[OrderController::class,'createCustomer']);
+Route::get('/get',[OrderController::class,'getCustomer']);
+Route::post('/pay',[OrderController::class,'store']);
 
 route::get('/login',[LoginController::class,'index'])->name('login');
 Route::post('/login',[LoginController::class,'authenticate']);
