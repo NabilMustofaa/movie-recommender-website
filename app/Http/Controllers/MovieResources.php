@@ -28,9 +28,13 @@ class MovieResources extends Controller
             $similar=$this->collaborative();
             $recommended=favorite::where('user_id',$similar)->where('liked',1)->get();
             $movie_recommend=[];
+            $movie_liked=[];
             foreach ($toprated as $item) {
                 if(in_array($item['id'],$recommended->pluck('movie_id')->toArray()) and !in_array($item['id'],$favorites->pluck('movie_id')->toArray())){
                     array_push($movie_recommend,$item);
+                }
+                if(in_array($item['id'],$favorites->where('liked',1)->pluck('movie_id')->toArray())){
+                    array_push($movie_liked,$item);
                 }
             }
             $movie_recommend_genre=$this->genresimilarity($toprated);
@@ -39,12 +43,15 @@ class MovieResources extends Controller
             $favorites = [];
             $movie_recommend=[];
             $movie_recommend_genre=[];
+            $movie_liked=[];
         }
+
         return view('home',[
             'toprated' => $toprated,
             'favorites' => $favorites,
             'recommended' => $movie_recommend,
-            'recommended_genre' => $movie_recommend_genre
+            'recommended_genre' => $movie_recommend_genre,
+            'liked'=>$movie_liked
         ]);
     }
 
