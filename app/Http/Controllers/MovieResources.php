@@ -42,7 +42,7 @@ class MovieResources extends Controller
                 }
             }
             foreach ($favorites as $item){
-                if(in_array($item->movie_id,$id)){
+                if(in_array($item->movie_id,$id) and $item['liked']==1){
                     array_push($movie_liked,$toprated[array_search($item->movie_id,$id)]);
                 }
             }

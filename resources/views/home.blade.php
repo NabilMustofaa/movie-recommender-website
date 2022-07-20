@@ -1,6 +1,6 @@
 @extends('layout.main2')
 @section('content')
-    <section id="bg-section" class="w-screen h-screen backdrop-blur" style="background-image: url('https://image.tmdb.org/t/p/original{{ $toprated[0]["backdrop_path"] }}');background-size:cover;" >
+    <section id="bg-section" class="w-screen backdrop-blur" style="background-image: url('https://image.tmdb.org/t/p/original{{ $toprated[0]["backdrop_path"] }}');background-size:cover;height:auto" >
         <div class="pt-64 pb-10 pl-24 pr-4 bg-gradient-to-r from-black w-screen h-full flex flex-col ">   
             <div class="h-2/5">
                 <h1 id="sectionTitle" class="text-5xl ml-8 w-2/5 text-center font-extrabold">{{ $toprated[0]["title"] }} </h1>
