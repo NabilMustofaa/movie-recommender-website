@@ -22,6 +22,6 @@ class DatabaseSeeder extends Seeder
             'email' => 'nabilmustofa6@gmail.com',
             'password' => bcrypt('nabil'),
         ]);
-        ModelsFavorite::factory(100)->create();
+        ModelsFavorite::factory(200)->create();
     }
 }

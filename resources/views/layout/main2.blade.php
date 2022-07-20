@@ -53,7 +53,7 @@
     @yield('content')
     
 
-    <footer class="container mx-auto py-8 border-t border-gray-400">
+    {{-- <footer class="container mx-auto py-8 border-t border-gray-400">
         <div class="container flex px-3 py-8 ">
             <div class="w-full mx-auto flex flex-wrap">
                 <div class="flex w-full lg:w-1/2 ">
@@ -76,7 +76,7 @@
                 </div>
             </div>
         </div>
-    </footer>
+    </footer> --}}
 
 </body>
 

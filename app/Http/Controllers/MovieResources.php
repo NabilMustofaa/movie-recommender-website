@@ -18,7 +18,14 @@ class MovieResources extends Controller
      */
     public function index()
     {
-        $toprated = Http::get('https://api.themoviedb.org/3/movie/top_rated?api_key='.env('TMDB_TOKEN'))->json()['results'];
+        $toprated = [];
+        $id=[];
+        for ($i=1; $i < 11 ; $i++) { 
+            foreach (Http::get('https://api.themoviedb.org/3/movie/popular?api_key='.env('TMDB_TOKEN').'&page='.$i)->json()['results'] as $item){
+                array_push($toprated,$item);
+                array_push($id,$item['id']);
+            }
+        }
 
         if(auth()->check()){
             $favorites = favorite::where('user_id',auth()->user()->id)
@@ -29,15 +36,25 @@ class MovieResources extends Controller
             $recommended=favorite::where('user_id',$similar)->where('liked',1)->get();
             $movie_recommend=[];
             $movie_liked=[];
-            foreach ($toprated as $item) {
-                if(in_array($item['id'],$recommended->pluck('movie_id')->toArray()) and !in_array($item['id'],$favorites->pluck('movie_id')->toArray())){
-                    array_push($movie_recommend,$item);
-                }
-                if(in_array($item['id'],$favorites->where('liked',1)->pluck('movie_id')->toArray())){
-                    array_push($movie_liked,$item);
+            foreach ($recommended as $item){
+                if(in_array($item->movie_id,$id) and !in_array($item->movie_id,$favorites->pluck('movie_id')->toArray())){
+                    array_push($movie_recommend,$toprated[array_search($item->movie_id,$id)]);
                 }
             }
-            $movie_recommend_genre=$this->genresimilarity($toprated);
+            foreach ($favorites as $item){
+                if(in_array($item->movie_id,$id)){
+                    array_push($movie_liked,$toprated[array_search($item->movie_id,$id)]);
+                }
+            }
+            // foreach ($toprated as $item) {
+            //     if(in_array($item['id'],$recommended->pluck('movie_id')->toArray()) and !in_array($item['id'],$favorites->pluck('movie_id')->toArray())){
+            //         array_push($movie_recommend,$item);
+            //     }
+            //     if(in_array($item['id'],$favorites->where('liked',1)->pluck('movie_id')->toArray())){
+            //         array_push($movie_liked,$item);
+            //     }
+            // }
+            $movie_recommend_genre=$this->genresimilarity($favorites->where('liked',1)->first()->movie_id);
         }
         else{
             $favorites = [];
@@ -85,10 +102,12 @@ class MovieResources extends Controller
     public function show($id)
     {
         $detail=Http::get('https://api.themoviedb.org/3/movie/'.$id.'?api_key='.env('TMDB_TOKEN'))->json();
-        dump($detail);
+        $similar=$this->genresimilarity($id);
+        $favorite = favorite::where('user_id',auth()->user()->id)->where('movie_id',$id)->first();
         return view('detail',[
-            'detail' => $detail
-            
+            'detail' => $detail,
+            'similar' => $similar,
+            'favorite' => $favorite
         ]);
     }
 
@@ -151,13 +170,16 @@ class MovieResources extends Controller
         $mostsimilar= array_search(max($similarity), $similarity);
         return $mostsimilar+1;
     }
-    private function genresimilarity($movielist){
-        $favorites = favorite::where('user_id',auth()->user()->id)
-        ->orderBy('liked', 'DESC')
-        ->orderBy('created_at', 'DESC')->get();
+    private function genresimilarity($movie_id){
+        $movielist=[];
+        for ($i=1; $i < 11 ; $i++) { 
+            foreach (Http::get('https://api.themoviedb.org/3/movie/popular?api_key='.env('TMDB_TOKEN').'&page='.$i)->json()['results'] as $item){
+                array_push($movielist,$item);
+            }
+        }
         $genres=[];
         foreach ($movielist as $movie) {
-            if($movie['id']==$favorites->first()['movie_id']){
+            if($movie['id']==$movie_id){
                 $genres=$movie['genre_ids'];
                 break;
             }
@@ -177,9 +199,6 @@ class MovieResources extends Controller
         $count=0;
 
         foreach($movielist as $item){
-            if (in_array($item['id'],$favorites->pluck('movie_id')->toArray())){
-                unset($movielist[$count]);
-            }
             if ($item['similarity']==0){
                 unset($movielist[$count]);
             }
