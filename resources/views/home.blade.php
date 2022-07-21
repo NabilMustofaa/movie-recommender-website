@@ -41,7 +41,7 @@
             
         </div>
     </section>
-    @auth
+    @if (auth()->check() and $recommended_genre != null)
     <section class="pl-24">
         <h3 class="text-white text-lg font-bold ml-8 mt-10">People liked too</h3>
             <div class="ml-8 mr-20 p-0">
@@ -89,8 +89,8 @@
                 </div>
             </div>    
     </section>
-
-    @endauth
+    @endif
+  
     <script>
         function changeSection(backdrop,title,overview,id){
             let bgSection = document.getElementById("bg-section");

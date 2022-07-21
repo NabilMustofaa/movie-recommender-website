@@ -29,5 +29,7 @@ Route::post('/pay',[OrderController::class,'store']);
 route::get('/login',[LoginController::class,'index'])->name('login');
 Route::post('/login',[LoginController::class,'authenticate']);
 Route::post('/logout',[LoginController::class,'logout'])->name('logout');  
+Route::get('/register',[LoginController::class,'indexRegister'])->name('register');
+route::post('/register',[LoginController::class,'register']);
 
 

@@ -54,7 +54,13 @@ class MovieResources extends Controller
             //         array_push($movie_liked,$item);
             //     }
             // }
-            $movie_recommend_genre=$this->genresimilarity($favorites->where('liked',1)->first()->movie_id);
+            if ($favorites->where('user_id',auth()->user()->id)->where('liked',1)->count()>0) {
+                $movie_recommend_genre=$this->genresimilarity($favorites->where('liked',1)->first()->movie_id);
+            }
+            else{
+                $movie_recommend_genre=[];
+            }
+           
         }
         else{
             $favorites = [];

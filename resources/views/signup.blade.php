@@ -49,8 +49,8 @@
   <div class="h-full w-full py-40 backdrop-brightness-50">
     
     <div class="text-white w-2/6 py-20 mx-auto backdrop-brightness-20 rounded-md" style=" z-index:99">
-      <h2 class="text-5xl font-bold mx-16">Sign In</h2>
-      <form action="/login" method="post">
+      <h2 class="text-5xl font-bold mx-16">Register</h2>
+      <form action="/register" method="post">
         @csrf
         <div class="mx-12">
           <div class="flex flex-wrap mt-5">
@@ -60,20 +60,19 @@
           </div>
           <div class="flex flex-wrap mt-5">
             <div class="w-full px-3">
+              <input type="name" name="name" id="name" class=" bg-gray-600 rounded w-full py-5 px-12 text-gray-200 text-base leading-tight" placeholder="name">
+            </div>
+          </div>
+          <div class="flex flex-wrap mt-5">
+            <div class="w-full px-3">
               <input type="password" name="password" id="password" class=" bg-gray-600 rounded w-full py-5 px-12 text-gray-200 text-base leading-tight" placeholder="Password">
             </div>
           </div>
           <div class="flex flex-wrap mt-5">
             <div class="w-full px-3">
-              <button type="submit" class="shadow bg-red-700 appearance-none rounded w-full py-5 px-12 text-gray-200 text-lg font-bold leading-tight focus:outline-none focus:shadow-outline">Sign In</button>
+              <button type="submit" class="shadow bg-red-700 appearance-none rounded w-full py-5 px-12 text-gray-200 text-lg font-bold leading-tight focus:outline-none focus:shadow-outline">Register</button>
             </div>
         </div>
-        <div class="flex flex-wrap mt-5">
-            <div class="w-full px-3">
-              <span>Doesnt Have Account ?</span>
-              <a href="/register" class=" text-red-700 font-semibold leading-tight focus:outline-none focus:shadow-outline">Register Here</a>
-            </div>
-       </div>     
       </form>
     </div>
   </div>
