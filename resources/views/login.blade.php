@@ -74,7 +74,11 @@
               <a href="/register" class=" text-red-700 font-semibold leading-tight focus:outline-none focus:shadow-outline">Register Here</a>
             </div>
        </div>     
+
       </form>
+      <div class="col-md-8 col-md-offset-4">
+        <a href="{{url('/redirect')}}" class="btn btn-primary">Login with Facebook</a>
+      </div>
     </div>
   </div>
 </body>

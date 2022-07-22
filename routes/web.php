@@ -4,6 +4,7 @@ use App\Http\Controllers\favorite;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MovieResources;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\SocialAuthFacebookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,5 +32,10 @@ Route::post('/login',[LoginController::class,'authenticate']);
 Route::post('/logout',[LoginController::class,'logout'])->name('logout');  
 Route::get('/register',[LoginController::class,'indexRegister'])->name('register');
 route::post('/register',[LoginController::class,'register']);
+
+Route::get('/redirect', [SocialAuthFacebookController::class, 'redirect']);
+Route::get('/callback', [SocialAuthFacebookController::class, 'callback']);
+
+
 
 
