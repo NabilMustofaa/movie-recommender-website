@@ -20,6 +20,7 @@
         body{
             background-color: #141414;
         }
+        
         html{
             overflow-x: hidden;
         }

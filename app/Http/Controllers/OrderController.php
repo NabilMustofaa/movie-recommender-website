@@ -83,17 +83,23 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        Xendit::setApiKey('xnd_development_P4qDfOss0OCpl8RtKrROHjaQYNCk9dN5lSfk+R1l9Wbe+rSiCwZ3jw==');
+        Xendit::setApiKey(env('XENDIT_API_KEY'));
 
         $params = [ 
             'external_id' => 'demo_1475801962607',
             'payer_email' => auth()->user()->email,
-            'description' => 'Movie Rent'.$request->movie_title,
+            'description' => 'Movie Rent '.$request->movie_title,
             'amount' => $request->price,
         ];
 
         $createInvoice = \Xendit\Invoice::create($params);
         dump($createInvoice);
+        Order::create([
+            'user_id' => auth()->user()->id,
+            'movie_id' => $request->movie_id,
+            'xendit_id' => $createInvoice['id'],
+            'description' => $createInvoice['description'],
+        ]);
 
         return redirect($createInvoice["invoice_url"]);
         }

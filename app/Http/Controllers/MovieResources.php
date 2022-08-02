@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\favorite;
+use App\Models\Order;
 use App\Models\User;
 use Facade\Ignition\DumpRecorder\Dump;
 use Favorites;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Xendit\Xendit;
 
 class MovieResources extends Controller
 {
@@ -18,8 +20,17 @@ class MovieResources extends Controller
      */
     public function index()
     {
+        // Xendit::setApiKey(env('XENDIT_API_KEY'));
+        // $orders=Order::where('user_id',auth()->user()->id)->get();
+        // $InvoiceList=[];
+        // foreach($orders as $order){
+        //     $Invoice=\Xendit\Invoice::retrieve($order['xendit_id']);
+        //     array_push($InvoiceList,$Invoice);
+        // }
+        // dump($InvoiceList);
         $toprated = [];
         $id=[];
+        $genres=Http::get('https://api.themoviedb.org/3/genre/movie/list?api_key='.env('TMDB_TOKEN'))->json()["genres"];
         for ($i=1; $i < 11 ; $i++) { 
             foreach (Http::get('https://api.themoviedb.org/3/movie/popular?api_key='.env('TMDB_TOKEN').'&page='.$i)->json()['results'] as $item){
                 array_push($toprated,$item);
@@ -74,7 +85,8 @@ class MovieResources extends Controller
             'favorites' => $favorites,
             'recommended' => $movie_recommend,
             'recommended_genre' => $movie_recommend_genre,
-            'liked'=>$movie_liked
+            'liked'=>$movie_liked,
+            'genres'=>$genres
         ]);
     }
 
@@ -107,13 +119,32 @@ class MovieResources extends Controller
      */
     public function show($id)
     {
+        $favorites = favorite::where('user_id',auth()->user()->id)
+            ->orderBy('liked', 'ASC')
+            ->orderBy('created_at', 'DESC')
+            ->get();
+        $ids=[];
+        $toprated=[];
+        $movie_liked=[];
+        for ($i=1; $i < 11 ; $i++) { 
+            foreach (Http::get('https://api.themoviedb.org/3/movie/popular?api_key='.env('TMDB_TOKEN').'&page='.$i)->json()['results'] as $item){
+                array_push($toprated,$item);
+                array_push($ids,$item['id']);
+            }
+        }
+        foreach ($favorites as $item){
+            if(in_array($item->movie_id,$ids) and $item['liked']==1){
+                array_push($movie_liked,$toprated[array_search($item->movie_id,$ids)]);
+            }
+        }    
         $detail=Http::get('https://api.themoviedb.org/3/movie/'.$id.'?api_key='.env('TMDB_TOKEN'))->json();
         $similar=$this->genresimilarity($id);
         $favorite = favorite::where('user_id',auth()->user()->id)->where('movie_id',$id)->first();
         return view('detail',[
             'detail' => $detail,
             'similar' => $similar,
-            'favorite' => $favorite
+            'favorite' => $favorite,
+            'liked' => $movie_liked
         ]);
     }
 

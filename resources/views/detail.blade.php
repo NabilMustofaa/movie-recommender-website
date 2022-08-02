@@ -44,6 +44,7 @@
                         @csrf
                         <input type="hidden" name="price" value="10000">
                         <input type="hidden" name="movie_title" value="{{ $detail["title"] }}">
+                        <input type="hidden" name="movie_id" value="{{ $detail["id"] }}">
                         <button class="bg-red-900 hover:bg-red-700 text-white font-bold py-2.5 px-6 text-lg rounded-sm mt-4">Rent Movie</button>
                     </form>
                     {{-- <a id="sectionLink" class="mt-11" href="/detail">

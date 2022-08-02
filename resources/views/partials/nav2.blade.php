@@ -34,14 +34,37 @@
             </div> --}}
             @auth
             <div class="text-white text-xl ml-7 ">
-
-                <a href="" class="flex items-center">
+                <button id="dropdownDefault" data-dropdown-toggle="dropdown-favorite" type="button" class="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
                     </svg>
                     <span class="ml-2">My List</span>
-                </a>
+                </button>
+                <div id="dropdown-favorite" class="hidden z-10 ml-20 rounded shadow border-2 border-gray-400 bg-[#141414]">
+                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault">
+                      <li>
+                        @for ($i=0;$i<count($liked);$i++)
+                        <a href="/detail/{{ $liked[$i]['id'] }}" class="flex py-2 px-4 hover:bg-gray-700 dark:hover:bg-gray-600 dark:hover:text-white " type="submit">
+                            <img class="rounded" src="https://image.tmdb.org/t/p/w500{{ $liked[$i]["poster_path"] }}" width="50px" height="50px">  
+                            <p class="text-white font-bold ml-2">{{ $liked[$i]['title'] }}</p>
+                        </a>   
+                        <hr> 
+                        @endfor
+                        
+                      </li>
+                    </ul>
+                </div>
             </div>
+            <div id="dropdown" class="hidden z-10 w-44 rounded shadow border-2 border-gray-400 bg-[#141414]">
+                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault">
+                      <li>
+                        <form action="/logout" method="POST">
+                        @csrf
+                        <button href="#" class="block py-2 px-4 hover:bg-gray-700 dark:hover:bg-gray-600 dark:hover:text-white" type="submit">Sign out</button>
+                        </form>
+                      </li>
+                    </ul>
+                </div>
             <div class="text-white text-xl ml-7 ">
                 <a href="" >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -59,7 +82,7 @@
                     </svg>
                 {{-- </a> --}}
                 </button>
-                <div id="dropdown" class="hidden z-10 w-44 rounded shadow border-2 border-gray-100" style="background-color:#141414">
+                <div id="dropdown" class="hidden z-10 w-44 rounded shadow border-2 border-gray-400 bg-[#141414]">
                     <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefault">
                       <li>
                         <form action="/logout" method="POST">

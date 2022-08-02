@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
+            $table->string('movie_id');
+            $table->string('xendit_id');
+            $table->string('description');
             $table->timestamps();
         });
     }
