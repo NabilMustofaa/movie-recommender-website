@@ -5,6 +5,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MovieResources;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SocialAuthFacebookController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +27,7 @@ route::get('/detail/{id}',[MovieResources::class,'show'])->name('home');
 Route::get('/api',[OrderController::class,'createCustomer']);
 Route::get('/get',[OrderController::class,'getCustomer']);
 Route::post('/pay',[OrderController::class,'store']);
+Route::get('/setting',[UserController::class,'show'])->middleware('auth');
 
 route::get('/login',[LoginController::class,'index'])->name('login');
 Route::post('/login',[LoginController::class,'authenticate']);
